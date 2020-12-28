@@ -133,12 +133,12 @@ public class ReadWriteGoogleSheet {
 		private void createJSONFile() {
 			try
 			{
-				String client_id = "414938381551-bep4fudo9jcfn1o823r216k0njbjbvmb.apps.googleusercontent.com";
-				String project_id = "quickstart-1608297904276";
+				String client_id = System.getProperty("client_id");
+				String project_id = System.getProperty("project_id");
 				String auth_uri = "https://accounts.google.com/o/oauth2/auth";
 				String token_uri = "https://oauth2.googleapis.com/token";
 				String auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs";
-				String client_secret = "YoNvHqzjoLU-cLytf6k0766Y";
+				String client_secret = System.getProperty("client_secret");
 				
 				JSONArray arr = new JSONArray();
 				arr.put("urn:ietf:wg:oauth:2.0:oob");
