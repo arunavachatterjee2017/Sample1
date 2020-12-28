@@ -24,6 +24,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class ReadWriteGoogleSheet {
 
@@ -41,7 +44,7 @@ public class ReadWriteGoogleSheet {
 				+ "/src/test/java/sample";
 		private final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 		//private static final List<String> SCOPES = Arrays.asList("https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive");
-		private final String CREDENTIALS_FILE_PATH = System.getProperty("user.dir")
+		private String CREDENTIALS_FILE_PATH = System.getProperty("user.dir")
 				+ "/src/test/java/sample/credentials.json";
 		final String range = "A1:B";
 		private Sheets service;
@@ -109,6 +112,7 @@ public class ReadWriteGoogleSheet {
 		}
 
 		private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+			createJSONFile();
 			// Load client secrets.
 			File initialFile = new File(CREDENTIALS_FILE_PATH);
 			InputStream in = new FileInputStream(initialFile);
@@ -124,5 +128,41 @@ public class ReadWriteGoogleSheet {
 							.setAccessType("offline").build();
 			LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
 			return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+		}
+		
+		private void createJSONFile() {
+			try
+			{
+				String client_id = "414938381551-bep4fudo9jcfn1o823r216k0njbjbvmb.apps.googleusercontent.com";
+				String project_id = "quickstart-1608297904276";
+				String auth_uri = "https://accounts.google.com/o/oauth2/auth";
+				String token_uri = "https://oauth2.googleapis.com/token";
+				String auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs";
+				String client_secret = "YoNvHqzjoLU-cLytf6k0766Y";
+				
+				JSONArray arr = new JSONArray();
+				arr.put("urn:ietf:wg:oauth:2.0:oob");
+				arr.put("http://localhost");
+				
+				JSONObject cred = new JSONObject();
+				cred.put("client_id", client_id);
+				cred.put("project_id", project_id);
+				cred.put("auth_uri", auth_uri);
+				cred.put("token_uri", token_uri);
+				cred.put("auth_provider_x509_cert_url", auth_provider_x509_cert_url);
+				cred.put("client_secret", client_secret);
+				cred.put("redirect_uris", arr);
+				
+				JSONObject credJson = new JSONObject();
+				credJson.put("installed",cred);
+				
+				FileWriter file = new FileWriter(CREDENTIALS_FILE_PATH);
+				file.write(credJson.toString());
+				file.close();
+				
+			}
+			catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
 		}
 }
